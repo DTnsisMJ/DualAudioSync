@@ -11,11 +11,15 @@ jobs:
         with:
           dotnet-version: 9.0.x
       - name: Install MAUI
-        run: dotnet workload install maui ios --ignore-failed-sources
-      - name: Restore
-        run: dotnet restore
-      - name: Build IPA
-        run: dotnet publish -f net9.0-ios -c Release -p:BuildIpa=True -p:ArchiveOnBuild=True -p:RuntimeIdentifier=ios-arm64 -p:EnableCodeSigning=false
+        run: dotnet workload install maui --ignore-failed-sources
+      - name: Clean
+        run: rm -rf bin obj Release */bin */obj
+      - name: Find and Build IPA
+        run: |
+          CSPROJ=$(find . -name "DualAudioSync.csproj" | head -n 1)
+          echo "Encontrado: $CSPROJ"
+          dotnet restore "$CSPROJ"
+          dotnet publish "$CSPROJ" -f net9.0-ios -c Release -p:BuildIpa=True -p:ArchiveOnBuild=True -p:RuntimeIdentifier=ios-arm64 -p:EnableCodeSigning=false
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
