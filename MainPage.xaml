@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DualAudioSync.MainPage">
+    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+        <Label Text="Dual Audio Sync" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center"/>
+        <Entry x:Name="TxtCodigo" Placeholder="Código sala" Keyboard="Numeric" HorizontalTextAlignment="Center"/>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Button x:Name="BtnCrear" Text="CREAR SALA" Clicked="OnCrearClicked" Grid.Column="0" BackgroundColor="Green"/>
+            <Button x:Name="BtnUnirse" Text="UNIRSE" Clicked="OnUnirseClicked" Grid.Column="1" BackgroundColor="Blue"/>
+        </Grid>
+        <Label x:Name="LblSala" Text="No conectado" HorizontalOptions="Center"/>
+        <Label x:Name="LblCancion" Text="Canción: --" HorizontalOptions="Center"/>
+        <Button x:Name="BtnSync" Text="SINCRONIZAR LO QUE SUENA" Clicked="OnSyncClicked" BackgroundColor="Black" TextColor="White" IsEnabled="False" HeightRequest="60"/>
+        <Button x:Name="BtnPausa" Text="PAUSAR AMBOS" Clicked="OnPausaClicked" BackgroundColor="Red" IsEnabled="False"/>
+        <Label x:Name="LblEstado" Text="Listo" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+    </VerticalStackLayout>
+</ContentPage>
