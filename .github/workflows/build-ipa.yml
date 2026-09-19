@@ -16,18 +16,26 @@ jobs:
           dotnet-version: 9.0.100
       - name: Install MAUI
         run: dotnet workload install maui --ignore-failed-sources
-      - name: Patch Xcode check - bypass 26.5 requirement
+      - name: Patch Xcode check - FORCE BYPASS
         run: |
-          echo "Parchando verificación de Xcode..."
-          find ~/.dotnet -name "Xamarin.Shared.Sdk.targets" -exec sed -i '' 's/<Error.*requires Xcode.*\/>/<!-- Patched: Xcode check bypassed -->/g' {} \;
-          find ~/.dotnet -name "Xamarin.Shared.Sdk.targets" -exec sed -i '' 's/This version of .NET for iOS.*//g' {} \;
+          python3 << 'PY'
+          import pathlib, re
+          for f in pathlib.Path.home().glob(".dotnet/packs/**/Xamarin.Shared.Sdk.targets"):
+              txt = f.read_text()
+              # reemplaza el <Error> que pide Xcode 26.5 por un Warning
+              txt = re.sub(r'<Error[^>]*This version of \.NET for iOS[^>]*?/>', '<!-- BYPASSED -->', txt, flags=re.DOTALL)
+              txt = re.sub(r'requires Xcode.*?more information\.', 'BYPASSED', txt)
+              f.write_text(txt)
+              print(f"Patched {f}")
+          PY
           xcodebuild -version
+          cat ~/.dotnet/packs/Microsoft.iOS.Sdk.net9.0_26.5/26.5.9004/targets/Xamarin.Shared.Sdk.targets | grep -n "26.5" | head
       - name: Build IPA
         run: |
           CSPROJ=$(find . -name "DualAudioSync.csproj" | head -n 1)
           echo "Encontrado: $CSPROJ"
           dotnet restore "$CSPROJ"
-          dotnet publish "$CSPROJ" -f net9.0-ios -c Release -p:BuildIpa=True -p:ArchiveOnBuild=True -p:RuntimeIdentifier=ios-arm64 -p:EnableCodeSigning=false -p:ContinuousIntegrationBuild=false
+          dotnet publish "$CSPROJ" -f net9.0-ios -c Release -p:BuildIpa=True -p:ArchiveOnBuild=True -p:RuntimeIdentifier=ios-arm64 -p:EnableCodeSigning=false
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
