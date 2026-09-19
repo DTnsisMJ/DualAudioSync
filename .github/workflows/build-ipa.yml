@@ -6,19 +6,19 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-      - name: Select latest Xcode
+      - name: Select Xcode 16.4
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
-      - name: Setup .NET 9
+          xcode-version: "16.4"
+      - name: Setup .NET 9.0.100
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.304
-      - name: Install MAUI
+          dotnet-version: 9.0.100
+      - name: Install MAUI old stable
         run: |
           dotnet workload install maui --ignore-failed-sources
+          dotnet workload list
           xcodebuild -version
-          dotnet --info
       - name: Build IPA
         run: |
           CSPROJ=$(find . -name "DualAudioSync.csproj" | head -n 1)
